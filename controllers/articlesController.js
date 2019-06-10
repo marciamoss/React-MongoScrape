@@ -113,6 +113,12 @@ module.exports = {
         res.json(dbModel);
       })
       .catch(err => res.status(422).json(err));
+    }else if(req.body.type==="saved"){
+      let id=req.body.id;
+      db.News.findOneAndUpdate({ _id: id }, { saved: true })
+      .then(update => {
+        res.json(id);
+      });
     }    
   },
   findById: function(req, res) {

@@ -25,12 +25,10 @@ class Articles extends Component {
         };
     };
 
-    //When this component mounts, grab all the saved books from database
     componentDidMount() {
         const type={type:"load"}
         API.scrapeArticles(type)  
         .then(res => {
-            console.log(res.data.length);
             this.setState({ news: res.data, delay: false, display: true });
         })
         .catch(err => console.log(err));
@@ -49,8 +47,16 @@ class Articles extends Component {
       .catch(err => console.log(err));
     };
 
-    saveArticle = event => {
-        event.preventDefault();
+    saveArticle = id => {
+        const type={type:"saved",id};
+        API.scrapeArticles(type)
+          .then(res => {
+              let newlist = this.state.news.filter(function( obj ) {
+                return obj._id !== res.data;
+              });
+              this.setState({ news: newlist});
+            })
+          .catch(err => console.log(err));
     };
 
     render() {
@@ -79,7 +85,8 @@ class Articles extends Component {
                                                         <h5 className="card-title"><a href={news.url} target="blank">{news.url}</a></h5>
                                                             <p className="card-text"  style={{color: "blue", fontWeight: "bold"}}>{news.summary}</p>
                                                             <form className="form-inline my-2 my-lg-0">
-                                                            <button className="btn btn-md btn-success font-weight-bold my-2 my-sm-0 mr-2 " onClick={this.saveArticle} >Save Article!</button>
+                                                            <button className="btn btn-md btn-success font-weight-bold my-2 my-sm-0 mr-2 " 
+                                                            onClick={(event) => {event.preventDefault();this.saveArticle(news._id)}} >Save Article!</button>
                                                             </form>
                                                         </div>
                                                         </div>
