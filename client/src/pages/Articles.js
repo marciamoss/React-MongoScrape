@@ -54,6 +54,7 @@ class Articles extends Component {
               let newlist = this.state.news.filter(function( obj ) {
                 return obj._id !== res.data;
               });
+              console.log(newlist);
               this.setState({ news: newlist});
             })
           .catch(err => console.log(err));
@@ -99,9 +100,16 @@ class Articles extends Component {
                             </div>
                         ) : (
                             <div className="row ml-5 mr-5 mt-5">
-                                <div  className="col-md-12 "> 
-                                    <h3 style={{color: "red", textAlign: "center", fontWeight: "bold"}}>Scraping Articles ....(takes about 3 seconds)</h3>
+                                <div  className="col-md-3 "> </div>
+                                <div  className="col-md-6 "> 
+                                    <div style={{width:"50%",height:"0",paddingBottom:"56%",position:"relative"}}>
+                                        <h2 style={{color: "#001f3f", textAlign: "center", fontWeight: "bold"}}>Working Hard for you ....</h2>
+                                        <iframe title="pbgiphy" src="https://giphy.com/embed/vn41rft0gkC1a" width="100%" height="100%" style={{position:"absolute"}} frameBorder="0" className="giphy-embed" allowFullScreen>
+                                        </iframe>
+                                    </div>
+                                    <p><a href="https://giphy.com/gifs/transparent-vn41rft0gkC1a">via GIPHY</a></p>
                                 </div>
+                                <div  className="col-md-3 "> </div>
                             </div>
                         )}
                     </Col>
