@@ -117,9 +117,23 @@ module.exports = {
       let id=req.body.id;
       db.News.findOneAndUpdate({ _id: id }, { saved: true })
       .then(update => {
+        console.log("update "+id);
         res.json(id);
       });
     }    
+  },
+  fetchsaved:  function(req, res) {
+    db.News.find({ saved:true })
+      // Specify that we want to populate the retrieved saved news with any associated notes
+      .populate("notes")
+      .then(dbSavedNews => {
+        // If any saved news are found, send them to the client with any associated notes
+        res.json(dbSavedNews);
+      })
+      .catch(err => {
+        // If an error occurs, send it back to the client
+        res.json(err);
+      });
   },
   findById: function(req, res) {
     db.Article

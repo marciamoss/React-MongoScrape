@@ -63,7 +63,7 @@ class Articles extends Component {
     render() {
         return (
             <>
-            <Nav handleScrape={this.handleScrape}/>
+            <Nav handleScrape={this.handleScrape} page={"homepage"}/>
             <Container fluid>
                 <Row>
                     <Col size="md-12">
