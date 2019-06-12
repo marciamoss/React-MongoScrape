@@ -120,9 +120,32 @@ module.exports = {
         console.log("update "+id);
         res.json(id);
       });
-    }    
+    }else if(req.body.type==="addnote"){
+      db.Note.create({usernote:req.body.notes, news: req.body.newsid })
+      .then(dbNote => {
+        return db.News.findOneAndUpdate({ _id: req.body.newsid }, { $push: { notes: dbNote._id } });
+      })
+      .then(dbNews => {
+        res.json(dbNews);
+      })
+      .catch(err => {
+        res.json(err);
+      });
+    }else if(req.body.type==="getnotes"){
+      db.News.find({ _id:req.body.newsid })
+        // Specify that we want to populate the retrieved saved news with any associated notes
+        .populate("notes")
+        .then(dbSavedNews => {
+          // If any saved news are found, send them to the client with any associated notes
+          res.json(dbSavedNews);
+        })
+        .catch(err => {
+          // If an error occurs, send it back to the client
+          res.json(err);
+        });
+    }      
   },
-  fetchsaved:  function(req, res) {
+  fetchsaved: function(req, res) {
     db.News.find({ saved:true })
       // Specify that we want to populate the retrieved saved news with any associated notes
       .populate("notes")
