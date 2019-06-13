@@ -16,7 +16,7 @@ class Saved extends Component {
             news:[],
             message:"",
             newsid:"",
-            previousnotes:[],
+            previousnotes:{newsid:"",notes:[]},
             show: false,
             handleClose() {
                 this.setState({ show: false });
@@ -43,12 +43,11 @@ class Saved extends Component {
     };
 
     addNotes = news => {
-        this.setState({show:news.show, handleClose: news.handleClose, newsid:news._id,previousnotes:[]});
+        this.setState({show:news.show, handleClose: news.handleClose, newsid:news._id,previousnotes:{newsid:"",notes:[]}});
         const notes={type:"getnotes",newsid: news._id}
         API.scrapeArticles(notes)
         .then(res => {
-            console.log(res.data[0].notes);
-            this.setState({previousnotes:res.data[0].notes});
+            this.setState({previousnotes: {newsid: res.data[0]._id, notes:res.data[0].notes}});
           })
         .catch(err => console.log(err));
     };
@@ -58,7 +57,7 @@ class Saved extends Component {
         const notes={type:"addnote",notes:this.state.message,newsid:this.state.newsid}
         API.scrapeArticles(notes)
         .then(res => {
-            this.setState({message:""});
+            this.setState({message:"",newsid:""});
             this.state.handleClose();
           })
         .catch(err => console.log(err));
@@ -69,11 +68,24 @@ class Saved extends Component {
     };
 
     deletenote = id => {
-        console.log("deletenote",id);
+        const deletetype={type:"deletenote",id:id.notesid,newsid:id.newsid}
+        API.scrapeArticles(deletetype)
+        .then(res => {
+            let newlist = (this.state.previousnotes.notes).filter(function( obj ) {
+                return obj._id !== res.data;
+            });
+            this.setState({ previousnotes:{newsid:this.state.previousnotes.newsid,notes:newlist}});
+          })
+        .catch(err => console.log(err));
     };
 
     delete = id => {
-        console.log("delete",id);
+        const deletetype={type:"deletenews",id}
+        API.scrapeArticles(deletetype)
+        .then(res => {
+            setTimeout(function(){ window.location.href = '/saved'; }, 100);
+          })
+        .catch(err => console.log(err));
     };
 
 
@@ -93,11 +105,11 @@ class Saved extends Component {
                                 </Modal.Header>
                                 <Modal.Body style={{fontWeight: "bold"}}>
                                     <List >
-                                    {this.state.previousnotes.map((notes,index) => (
+                                    {(this.state.previousnotes.notes).map((notes,index) => (
                                         <ListItem key={index}>{notes.usernote}
-                                            <span style={{ float: "right"}} onClick={(event) => {
+                                            <span data-id={this.state.previousnotes.newsid} style={{ float: "right"}} onClick={(event) => {
                                                         event.preventDefault();
-                                                        this.deletenote(notes._id)}}
+                                                        this.deletenote({notesid:notes._id,newsid:this.state.previousnotes.newsid})}}
                                                     >
                                                 X
                                             </span>

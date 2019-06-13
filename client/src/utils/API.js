@@ -11,8 +11,8 @@ export default {
   },
 
   // // Deletes the article with the given id
-  // deleteArticle: function(id) {
-  //   return axios.delete("/api/articles/" + id);
-  // },
+  deleteArticle: function(id) {
+    return axios.delete("/api/articles/" + id);
+  }
 
 };

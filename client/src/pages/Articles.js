@@ -54,7 +54,6 @@ class Articles extends Component {
               let newlist = this.state.news.filter(function( obj ) {
                 return obj._id !== res.data;
               });
-              console.log(newlist);
               this.setState({ news: newlist});
             })
           .catch(err => console.log(err));

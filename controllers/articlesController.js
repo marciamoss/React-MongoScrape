@@ -88,7 +88,8 @@ module.exports = {
       })
       .catch(err => res.status(422).json(err));
 
-    }else if(req.body.type==="load"){
+    }
+    if(req.body.type==="load"){
       db.News
       .find({saved:false, displayed:false}).sort({'dateofarticle': -1}).limit(10)
       .populate("notes")
@@ -113,14 +114,15 @@ module.exports = {
         res.json(dbModel);
       })
       .catch(err => res.status(422).json(err));
-    }else if(req.body.type==="saved"){
+    }
+    if(req.body.type==="saved"){
       let id=req.body.id;
       db.News.findOneAndUpdate({ _id: id }, { saved: true })
       .then(update => {
-        console.log("update "+id);
         res.json(id);
       });
-    }else if(req.body.type==="addnote"){
+    }
+    if(req.body.type==="addnote"){
       db.Note.create({usernote:req.body.notes, news: req.body.newsid })
       .then(dbNote => {
         return db.News.findOneAndUpdate({ _id: req.body.newsid }, { $push: { notes: dbNote._id } });
@@ -131,7 +133,8 @@ module.exports = {
       .catch(err => {
         res.json(err);
       });
-    }else if(req.body.type==="getnotes"){
+    }
+    if(req.body.type==="getnotes"){
       db.News.find({ _id:req.body.newsid })
         // Specify that we want to populate the retrieved saved news with any associated notes
         .populate("notes")
@@ -144,6 +147,45 @@ module.exports = {
           res.json(err);
         });
     }      
+    if(req.body.type==="deletenews"){
+      let id=req.body.id;
+      //before deleting the news get all the noteids associated with it to remove from notes db
+      db.News.find({ _id: id })
+      .then(dbSavedNews => {
+        let notes=dbSavedNews[0].notes;
+        for(let i=0;i<notes.length;i++){
+          db.Note.deleteOne({ _id: notes[i] })
+          .then(dbNews => { 
+          })
+            .catch(err => {
+              res.json(err);
+          });  
+        }
+          //when article in unsaved remove all note associations
+          db.News.findOneAndUpdate({ _id: id}, { saved: false, $pull: { notes: { $nin: [] } } },{ multi: true })
+          .then(update => {
+            res.json("article unsaved");
+          });
+      })
+      .catch(err => {
+        // If an error occurs, send it back to the client
+        res.json(err);
+      });
+    }
+    if(req.body.type==="deletenote"){
+      let id=req.body.id;
+      db.Note.deleteOne({ _id: id })
+      .then(dbNews => {
+        res.json(id);
+      })
+        .catch(err => {
+          res.json(err);
+      });  
+      //when note is deleted remove associated note id in news
+      db.News.findOneAndUpdate({ _id: req.body.newsid}, { $pull: { notes: { $in: [req.body.id] } } },{ multi: true })
+      .then(update => {
+      });
+    }
   },
   fetchsaved: function(req, res) {
     db.News.find({ saved:true })
@@ -157,6 +199,13 @@ module.exports = {
         // If an error occurs, send it back to the client
         res.json(err);
       });
+  },
+  remove: function(req, res) {
+    db.News
+      .findById({ _id: req.params.id })
+      .then(dbModel => dbModel.remove())
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err));
   },
   findById: function(req, res) {
     db.Article
@@ -173,13 +222,6 @@ module.exports = {
   update: function(req, res) {
     db.Article
       .findOneAndUpdate({ _id: req.params.id }, req.body)
-      .then(dbModel => res.json(dbModel))
-      .catch(err => res.status(422).json(err));
-  },
-  remove: function(req, res) {
-    db.Article
-      .findById({ _id: req.params.id })
-      .then(dbModel => dbModel.remove())
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   }
