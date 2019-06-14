@@ -19,7 +19,7 @@ class Saved extends Component {
             previousnotes:{newsid:"",notes:[]},
             show: false,
             handleClose() {
-                this.setState({ show: false });
+                this.setState({ show: false,message:"" });
             },
             handleShow() {
                 this.setState({ show: true });
@@ -52,19 +52,17 @@ class Saved extends Component {
         .catch(err => console.log(err));
     };
 
-    notesToDb = news => {
-        if(this.state.message !== ""){
+    notesToDb = event => {
+        event.preventDefault();
         const notes={type:"addnote",notes:this.state.message,newsid:this.state.newsid}
         API.scrapeArticles(notes)
         .then(res => {
-            this.setState({message:"",newsid:""});
-            this.state.handleClose();
-          })
+            let previous=this.state.previousnotes.notes;
+            previous.push({usernote:this.state.message});
+            this.setState({message:""});
+            //this.state.handleClose();
+        })
         .catch(err => console.log(err));
-        }else{
-            this.state.handleClose();
-        }
-        
     };
 
     deletenote = id => {
@@ -119,12 +117,15 @@ class Saved extends Component {
                                     <form id="updateform">
                                         <div className="form-group">
                                             <p>Notes</p>
-                                            <textarea name="message" onChange={this.handleInputChange} rows="4" cols="60" ></textarea>
+                                            <textarea name="message" value={this.state.message} onChange={this.handleInputChange} rows="4" cols="60" ></textarea>
                                         </div>
                                     </form>
                                 </Modal.Body>
                                 <Modal.Footer>
-                                    <Button variant="primary" onClick={this.notesToDb}>
+                                    <Button variant="primary" 
+                                        disabled={!(this.state.message)}
+                                        onClick={this.notesToDb}
+                                    >
                                         Submit
                                     </Button>
                                     <Button variant="primary" onClick={this.state.handleClose}>
