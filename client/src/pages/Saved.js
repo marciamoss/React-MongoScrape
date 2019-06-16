@@ -164,8 +164,10 @@ class Saved extends Component {
                                         ))}
                                     </div>
                                     ) : (
-                                        null
-                                    )}
+                                        <div style={{textAlign:"center",color:"red", fontSize:"24px", fontWeight:"bold"}}>
+                                            No Saved Articles Yet!
+                                        </div>
+                                )}
                             </div>
                         </div>       
                     </Col>

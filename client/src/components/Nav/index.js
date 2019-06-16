@@ -1,5 +1,7 @@
 import React from "react";
 import { FormBtn } from "../../components/Form";
+import { Link } from "react-router-dom";
+
 function Nav(props) {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-info">
@@ -13,7 +15,7 @@ function Nav(props) {
               Saved Articles
             </a>
             ):(
-              null
+              <Link to="/" style={{color:"white"}}>← Back to Scraper</Link>
             )}
         </div>
         <form>  

@@ -40,7 +40,7 @@ class Articles extends Component {
         const type={type:"scrape"}
         API.scrapeArticles(type)        
         .then(res =>  {
-            this.setState({ news: res.data, display: true });
+            this.setState({ display: true });
           setTimeout(function(){ window.location.href = '/'; }, 3000);
           
         })
