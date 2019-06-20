@@ -7,7 +7,7 @@ function Nav(props) {
     <nav className="navbar navbar-expand-lg navbar-dark bg-info">
       <div className="container">
         <a className="navbar-brand" href="/">
-          Mongo Scraper
+          <i class="fa fa-home"></i> Mongo Scraper
         </a>
         <div>
           {!(props.page === "savedpage") ? (  
