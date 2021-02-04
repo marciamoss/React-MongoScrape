@@ -25,6 +25,7 @@ module.exports = {
           //delete all records, once all are displayed for fresh scrape
           db.News.deleteMany({saved:false, displayed:true})
           .then(alldeleted => {
+            console.log("server log2", JSON.stringify(alldeletedl,null,1));
             //get all the sections from NYTIMES
             axios.get("https://www.nytimes.com").then(sections => {
               const $ = cheerio.load(sections.data);
@@ -38,6 +39,7 @@ module.exports = {
               // Make a request via axios for the news section 
               function getnews(sectionsNYT){
                 axios.get(sectionsNYT).then(response => {  
+                  console.log("server log2", JSON.stringify(response.data,null,1));
                   // Load the html body from axios into cheerio
                   const $ = cheerio.load(response.data);
                   // For each element in latest news
