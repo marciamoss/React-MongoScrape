@@ -40,6 +40,7 @@ class Articles extends Component {
         const type={type:"scrape"}
         API.scrapeArticles(type)        
         .then(res =>  {
+            console.log("client side scraped response", JSON.stringify(res,null,1));
             this.setState({ display: true });
           setTimeout(function(){ window.location.href = '/'; }, 3000);
           

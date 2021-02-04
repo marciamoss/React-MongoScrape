@@ -11,6 +11,7 @@ module.exports = {
       db.News
       .find({saved:false, displayed:false}).sort({'dateofarticle': -1}).limit(10)
       .then(dbModel => {
+        console.log("server log1", JSON.stringify(dbModel,null,1));
         if(dbModel.length > 0){
           //delete all records, once all are displayed for fresh scrape
           db.News.deleteMany({saved:false, displayed:true})
