@@ -39,7 +39,7 @@ module.exports = {
               // Make a request via axios for the news section 
               function getnews(sectionsNYT){
                 axios.get(sectionsNYT).then(response => {  
-                  console.log("server log2", JSON.stringify(response.data,null,1));
+                  console.log("server log3", JSON.stringify(response.data,null,1));
                   // Load the html body from axios into cheerio
                   const $ = cheerio.load(response.data);
                   // For each element in latest news
@@ -98,14 +98,14 @@ module.exports = {
       .populate("notes")
       .then(dbModel => {
         //delete all records, once all are displayed for fresh scrape
-        if(dbModel.length===0){
-          db.News.deleteMany({saved:false, displayed:true})
-          .then(alldeleted => {
-          })
-          .catch(err => {
-            console.log(err);
-          }); 
-        }
+        // if(dbModel.length===0){
+        //   db.News.deleteMany({saved:false, displayed:true})
+        //   .then(alldeleted => {
+        //   })
+        //   .catch(err => {
+        //     console.log(err);
+        //   });
+        // }
         for (var i=0;i<dbModel.length;i++){
           db.News.findOneAndUpdate({ _id: dbModel[i]._id }, { displayed: true })
           .then(update => {
