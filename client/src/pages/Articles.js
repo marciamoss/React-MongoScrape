@@ -103,10 +103,10 @@ class Articles extends Component {
                                 <div  className="col-md-6 "> 
                                     <div style={{width:"50%",height:"0",paddingBottom:"56%",position:"relative"}}>
                                         <h2 style={{color: "#001f3f", textAlign: "center", fontWeight: "bold"}}>Working Hard for you ....</h2>
-                                        <iframe title="pbgiphy" src="https://giphy.com/embed/vn41rft0gkC1a" width="100%" height="100%" style={{position:"absolute"}} frameBorder="0" className="giphy-embed" allowFullScreen>
+                                        <iframe title="pbgiphy" src="https://giphy.com/embed/Vzk5PFo9iH5AEustmv" width="100%" height="100%" style={{position:"absolute"}} frameBorder="0" className="giphy-embed" allowFullScreen>
                                         </iframe>
                                     </div>
-                                    <p><a href="https://giphy.com/gifs/transparent-vn41rft0gkC1a">via GIPHY</a></p>
+                                    <p><a href="https://giphy.com/gifs/memecandy-Vzk5PFo9iH5AEustmv">via GIPHY</a></p>
                                 </div>
                                 <div  className="col-md-3 "> </div>
                             </div>
