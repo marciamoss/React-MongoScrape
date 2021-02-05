@@ -69,7 +69,7 @@ module.exports = {
     }
     if(req.body.type==="load"){
       db.News
-      .find({saved:false}).sort({'dateofarticle': -1}).limit(10)
+      .find({saved:false}).sort({'dateofarticle': -1})
       .populate("notes")
       .then(dbModel => {
         for (var i=0;i<dbModel.length;i++){
