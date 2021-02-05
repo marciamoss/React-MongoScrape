@@ -33,9 +33,12 @@ module.exports = {
               
               $(".css-1d8a290").children("ul").children("li").children("a").each((j, sectionelement) => {
                 const sectionsNYT = $(sectionelement).attr("href");
-                newssections.push(sectionsNYT);
-                getnews(sectionsNYT);
+                if ( sectionsNYT === 'https://www.nytimes.com/section/us') {
+                  newssections.push(sectionsNYT);
+                  getnews(sectionsNYT);
+                }
               });
+              console.log("newssections",newssections);
               // Make a request via axios for the news section 
               function getnews(sectionsNYT){
                 axios.get(sectionsNYT).then(response => {  
@@ -54,7 +57,7 @@ module.exports = {
                       const newsdate=($(element2).children("div").children("div").children("a").attr("href")).substr(1,10).split('/');
                       console.log("debugging log1", newsdate);
                       if(newsdate.length===3){
-                        dateofarticle = new Date(newsdate.join("-"));
+                        dateofarticle = newsdate.join("-");
                         console.log("debugging log2", dateofarticle);
                       }
                     }
@@ -72,7 +75,7 @@ module.exports = {
                       (err, inserted) => {
                         if (err) {
                           // Log the error if one is encountered during the query
-                          console.log("error while adding to db",err);
+                          console.log("error while adding to db",err.errmsg);
                         }
                         else {
                           // Otherwise, log the inserted data
