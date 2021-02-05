@@ -70,7 +70,7 @@ module.exports = {
                       (err, inserted) => {
                         if (err) {
                           // Log the error if one is encountered during the query
-                          console.log("error while adding to db",err.errmsg);
+                          console.log("error while adding to db",err);
                         }
                         else {
                           // Otherwise, log the inserted data
