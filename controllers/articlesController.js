@@ -13,8 +13,12 @@ module.exports = {
         
         $(".css-1d8a290").children("ul").children("li").children("a").each((j, sectionelement) => {
           const sectionsNYT = $(sectionelement).attr("href");
-          newssections.push(sectionsNYT);
-          getnews(sectionsNYT)
+          if (sectionsNYT === 'https://www.nytimes.com/section/us' || sectionsNYT === 'https://www.nytimes.com/section/business' ||
+              sectionsNYT === 'https://www.nytimes.com/section/technology' || sectionsNYT === 'https://www.nytimes.com/section/science' ||
+              sectionsNYT ===  'https://www.nytimes.com/section/health' || sectionsNYT === 'https://www.nytimes.com/section/sports') {
+            newssections.push(sectionsNYT);
+            getnews(sectionsNYT);
+          }
         });
         // Make a request via axios for the news section 
         function getnews(sectionsNYT){
