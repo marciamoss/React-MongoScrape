@@ -72,15 +72,6 @@ module.exports = {
       .find({saved:false}).sort({'dateofarticle': -1}).limit(10)
       .populate("notes")
       .then(dbModel => {
-        //delete all records, once all are displayed for fresh scrape
-        // if(dbModel.length===0){
-        //   db.News.deleteMany({saved:false, displayed:true})
-        //   .then(alldeleted => {
-        //   })
-        //   .catch(err => {
-        //     console.log(err);
-        //   });
-        // }
         for (var i=0;i<dbModel.length;i++){
           db.News.findOneAndUpdate({ _id: dbModel[i]._id }, { displayed: true })
           .then(update => {
