@@ -52,8 +52,10 @@ module.exports = {
                     
                     if (url && headline && summary){
                       const newsdate=($(element2).children("div").children("div").children("a").attr("href")).substr(1,10).split('/');
+                      console.log("debugging log1", newsdate);
                       if(newsdate.length===3){
                         dateofarticle = new Date(newsdate.join("-"));
+                        console.log("debugging log2", dateofarticle);
                       }
                     }
                     // If this found element had both a title and a link
