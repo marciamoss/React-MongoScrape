@@ -7,99 +7,65 @@ module.exports = {
   scrape: function(req, res) {
     let newssections=[];
     if(req.body.type==="scrape"){
-      //check if there is previous scraped data
-      // db.News
-      // .find({saved:false, displayed:false}).sort({'dateofarticle': -1}).limit(10)
-      // .then(dbModel => {
-        // console.log("server log1", JSON.stringify(dbModel,null,1));
-        /*if(dbModel.length > 0){
-          //delete all records, once all are displayed for fresh scrape
-          db.News.deleteMany({saved:false, displayed:true})
-          .then(alldeleted => {
-          })
-          .catch(err => {
-            console.log(err);
-          }); 
-          res.json("not scraped");
-        }*/
-        // else{
-          //delete all records, once all are displayed for fresh scrape
-          // db.News.deleteMany({saved:false, displayed:true})
-          // .then(alldeleted => {
-            // console.log("server log2", JSON.stringify(alldeleted,null,1));
-            //get all the sections from NYTIMES
-            axios.get("https://www.nytimes.com").then(sections => {
-              const $ = cheerio.load(sections.data);
+      //get all the sections from NYTIMES
+      axios.get("https://www.nytimes.com").then(sections => {
+        const $ = cheerio.load(sections.data);
+        
+        $(".css-1d8a290").children("ul").children("li").children("a").each((j, sectionelement) => {
+          const sectionsNYT = $(sectionelement).attr("href");
+          newssections.push(sectionsNYT);
+          getnews(sectionsNYT)
+        });
+        // Make a request via axios for the news section 
+        function getnews(sectionsNYT){
+          axios.get(sectionsNYT).then(response => {  
+            // Load the html body from axios into cheerio
+            const $ = cheerio.load(response.data);
+            // For each element in latest news
+            $(".css-13mho3u").children("ol").children("li").each((j, element2) => {
+              // Save the text and href of each link enclosed in the current element
+              const section = sectionsNYT;
+              const url = "https://www.nytimes.com"+$(element2).children("div").children("div").children("a").attr("href");
+              const headline = $(element2).children("div").children("div").children("a").children("h2").text();
+              const summary = $(element2).children("div").children("div").children("a").children("p").text();
+              let dateofarticle;
               
-              $(".css-1d8a290").children("ul").children("li").children("a").each((j, sectionelement) => {
-                const sectionsNYT = $(sectionelement).attr("href");
-                if ( sectionsNYT === 'https://www.nytimes.com/section/us') {
-                  newssections.push(sectionsNYT);
-                  getnews(sectionsNYT);
+              if (url && headline && summary){
+                const newsdate=($(element2).children("div").children("div").children("a").attr("href")).substr(1,10).split('/');
+                if(newsdate.length===3){
+                  dateofarticle = newsdate.join("-");
                 }
-              });
-              console.log("newssections",newssections);
-              // Make a request via axios for the news section 
-              function getnews(sectionsNYT){
-                axios.get(sectionsNYT).then(response => {  
-                  // Load the html body from axios into cheerio
-                  const $ = cheerio.load(response.data);
-                  // For each element in latest news
-                  $(".css-13mho3u").children("ol").children("li").each((j, element2) => {
-                    // Save the text and href of each link enclosed in the current element
-                    const section = sectionsNYT;
-                    const url = "https://www.nytimes.com"+$(element2).children("div").children("div").children("a").attr("href");
-                    const headline = $(element2).children("div").children("div").children("a").children("h2").text();
-                    const summary = $(element2).children("div").children("div").children("a").children("p").text();
-                    let dateofarticle;
-                    
-                    if (url && headline && summary){
-                      const newsdate=($(element2).children("div").children("div").children("a").attr("href")).substr(1,10).split('/');
-                      console.log("debugging log1", newsdate);
-                      if(newsdate.length===3){
-                        dateofarticle = newsdate.join("-");
-                        console.log("debugging log2", dateofarticle);
-                      }
-                    }
-                    // If this found element had both a title and a link
-                    if (url && headline && summary) {
-                      // Insert the data in the scrapedData db
-                      db.News.create({
-                        section,
-                        dateofarticle,
-                        headline,
-                        url,
-                        summary,
-                        saved: false
-                      },
-                      (err, inserted) => {
-                        if (err) {
-                          // Log the error if one is encountered during the query
-                          console.log("error while adding to db",err.errmsg);
-                        }
-                        else {
-                          // Otherwise, log the inserted data
-                          console.log("server log record inserted", JSON.stringify(inserted,null,1));
-  
-                        }
-                      });  
-                    }
-                  });
-                });
               }
-            },res.json("scraped"));
-          // })
-          // .catch(err => {
-          //   console.log(err);
-          // }); 
-        // }
-      // })
-      // .catch(err => res.status(422).json(err));
-
+              // If this found element had both a title and a link
+              if (url && headline && summary) {
+                // Insert the data in the scrapedData db
+                db.News.create({
+                  section,
+                  dateofarticle,
+                  headline,
+                  url,
+                  summary,
+                  saved: false
+                },
+                (err, inserted) => {
+                  if (err) {
+                    // Log the error if one is encountered during the query
+                    console.log("error while adding to db",err.errmsg);
+                  }
+                  else {
+                    // Otherwise, log the inserted data
+                    console.log("server log record inserted", JSON.stringify(inserted,null,1));
+                  }
+                });  
+              }
+            });
+          });
+        }
+      },res.json("scraped"));
     }
     if(req.body.type==="load"){
       db.News
-      .find({saved:false, displayed:false}).sort({'dateofarticle': -1}).limit(10)
+      .find({saved:false}).sort({'dateofarticle': -1}).limit(10)
       .populate("notes")
       .then(dbModel => {
         //delete all records, once all are displayed for fresh scrape
