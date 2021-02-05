@@ -8,11 +8,11 @@ module.exports = {
     let newssections=[];
     if(req.body.type==="scrape"){
       //check if there is previous scraped data
-      db.News
-      .find({saved:false, displayed:false}).sort({'dateofarticle': -1}).limit(10)
-      .then(dbModel => {
-        console.log("server log1", JSON.stringify(dbModel,null,1));
-        if(dbModel.length > 0){
+      // db.News
+      // .find({saved:false, displayed:false}).sort({'dateofarticle': -1}).limit(10)
+      // .then(dbModel => {
+        // console.log("server log1", JSON.stringify(dbModel,null,1));
+        /*if(dbModel.length > 0){
           //delete all records, once all are displayed for fresh scrape
           db.News.deleteMany({saved:false, displayed:true})
           .then(alldeleted => {
@@ -21,11 +21,12 @@ module.exports = {
             console.log(err);
           }); 
           res.json("not scraped");
-        }else{
+        }*/
+        // else{
           //delete all records, once all are displayed for fresh scrape
-          db.News.deleteMany({saved:false, displayed:true})
-          .then(alldeleted => {
-            console.log("server log2", JSON.stringify(alldeleted,null,1));
+          // db.News.deleteMany({saved:false, displayed:true})
+          // .then(alldeleted => {
+            // console.log("server log2", JSON.stringify(alldeleted,null,1));
             //get all the sections from NYTIMES
             axios.get("https://www.nytimes.com").then(sections => {
               const $ = cheerio.load(sections.data);
@@ -35,11 +36,9 @@ module.exports = {
                 newssections.push(sectionsNYT);
                 getnews(sectionsNYT);
               });
-              //console.log(newssections);
               // Make a request via axios for the news section 
               function getnews(sectionsNYT){
                 axios.get(sectionsNYT).then(response => {  
-                  console.log("server log3", JSON.stringify(response.data,null,1));
                   // Load the html body from axios into cheerio
                   const $ = cheerio.load(response.data);
                   // For each element in latest news
@@ -71,11 +70,12 @@ module.exports = {
                       (err, inserted) => {
                         if (err) {
                           // Log the error if one is encountered during the query
-                          console.log(err.errmsg);
+                          console.log("error while adding to db",err.errmsg);
                         }
                         else {
                           // Otherwise, log the inserted data
-                          //console.log(inserted);    
+                          console.log("server log record inserted", JSON.stringify(inserted,null,1));
+  
                         }
                       });  
                     }
@@ -83,13 +83,13 @@ module.exports = {
                 });
               }
             },res.json("scraped"));
-          })
-          .catch(err => {
-            console.log(err);
-          }); 
-        }
-      })
-      .catch(err => res.status(422).json(err));
+          // })
+          // .catch(err => {
+          //   console.log(err);
+          // }); 
+        // }
+      // })
+      // .catch(err => res.status(422).json(err));
 
     }
     if(req.body.type==="load"){
